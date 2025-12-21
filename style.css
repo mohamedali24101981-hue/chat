@@ -1,0 +1,48 @@
+:root {
+    --bg: #0b0f1a;
+    --card: #161d2f;
+    --accent: #0ea5e9;
+    --text: #f8fafc;
+}
+
+body {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--text);
+    height: 100vh; display: flex; flex-direction: column;
+    overflow: hidden;
+}
+
+.safe-area {
+    padding-top: env(safe-area-inset-top);
+    height: 100%; display: flex; flex-direction: column;
+}
+
+/* أنميشن الحروف المضيئة بالترتيب (Splash) */
+.splash-container {
+    height: 100vh; display: flex; justify-content: center; align-items: center;
+}
+.splash-text span {
+    font-size: 80px; font-weight: bold; color: transparent;
+    display: inline-block; animation: glow-in 1s forwards;
+}
+.splash-text span:nth-child(1) { animation-delay: 0.5s; }
+.splash-text span:nth-child(2) { animation-delay: 1.0s; }
+.splash-text span:nth-child(3) { animation-delay: 1.5s; }
+.splash-text span:nth-child(4) { animation-delay: 2.0s; }
+
+@keyframes glow-in {
+    from { color: transparent; text-shadow: none; transform: scale(0.5); }
+    to { color: var(--accent); text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent); transform: scale(1); }
+}
+
+/* تصميم الصناديق والأزرار */
+.box { background: var(--card); padding: 30px; border-radius: 25px; width: 85%; max-width: 350px; margin: auto; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #2d3748; background: #0b0f1a; color: white; outline: none; box-sizing: border-box; }
+button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px var(--accent); }
+.user-item { display: flex; align-items: center; gap: 15px; background: var(--card); padding: 15px; margin: 10px; border-radius: 15px; }
+.user-item img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); }
+.chat-msgs { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; }
+.m { max-width: 75%; padding: 12px; margin: 5px 0; border-radius: 15px; font-size: 15px; }
+.me { align-self: flex-end; background: var(--accent); color: white; }
+.other { align-self: flex-start; background: #2d3748; color: white; }

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body style="display:block;">
+    <div class="safe-area">
+        <div style="padding:15px; background:var(--card); display:flex; align-items:center; gap:10px;">
+            <button onclick="location.href='users.html'" style="width:auto; padding:5px 10px;">🔙</button>
+            <b id="target"></b>
+        </div>
+        <div id="msgs" class="chat-msgs"></div>
+        <div style="padding:10px; background:var(--card); display:flex; gap:5px;">
+            <input id="in" placeholder="رسالة..." style="margin:0;">
+            <button id="send" style="width:70px; margin:0;">🚀</button>
+        </div>
+    </div>
+    <script src="Firebase.js"></script>
+    <script>
+        const me = localStorage.getItem("me"), to = localStorage.getItem("to");
+        const id = [me, to].sort().join("_");
+        document.getElementById("target").innerText = to;
+
+        db.ref("chats/"+id).on("child_added", s => {
+            let m = s.val(), d = document.createElement("div");
+            d.className = "m " + (m.f === me ? "me" : "other");
+            d.innerText = m.t;
+            document.getElementById("msgs").appendChild(d);
+            document.getElementById("msgs").scrollTop = document.getElementById("msgs").scrollHeight;
+
+            // إشعار لو التطبيق في الخلفية والرسالة من الطرف التاني
+            if (m.f !== me && document.hidden) {
+                if (Notification.permission === "granted") {
+                    new Notification(`Pody: ${m.f}`, { body: m.t });
+                }
+            }
+        });
+
+        document.getElementById("send").onclick = () => {
+            let t = document.getElementById("in").value;
+            if(t) { db.ref("chats/"+id).push({f:me, t:t}); document.getElementById("in").value=""; }
+        };
+    </script>
+</body>
+</html>

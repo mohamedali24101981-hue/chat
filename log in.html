@@ -2,14 +2,14 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
-<body style="display:flex;">
+<body>
     <div class="box">
-        <h3 style="margin:0 0 10px 0; color:var(--accent);">Pody Chat</h3>
+        <h2 style="color: var(--accent);">Pody Chat</h2>
         <input id="u" type="text" placeholder="اسمك">
         <input id="p" type="password" placeholder="كلمة السر">
         <button id="btn">دخول</button>
@@ -22,7 +22,7 @@
             db.ref("users/"+u).once("value").then(s => {
                 if(s.exists()){
                     if(s.val().password === p) { localStorage.setItem("me",u); location.replace("users.html"); }
-                    else alert("خطأ");
+                    else alert("كلمة السر خطأ");
                 } else {
                     db.ref("users/"+u).set({name:u, password:p, photo: "https://ui-avatars.com/api/?name="+u})
                     .then(() => { localStorage.setItem("me",u); location.replace("users.html"); });

@@ -5,94 +5,63 @@
     --text: #f8fafc;
 }
 
-body {
+body, html {
     margin: 0; padding: 0;
+    width: 100%; height: 100%;
     font-family: 'Segoe UI', sans-serif;
     background: var(--bg); color: var(--text);
-    height: 100vh; display: flex; flex-direction: column;
-    overflow: hidden;
-    /* بيخلي الخطوط أرفع وأصغر */
-    -webkit-text-size-adjust: 100%;
+    overflow: hidden; /* لمنع السكرول العشوائي للموقع كله */
 }
 
-.safe-area {
-    padding-top: env(safe-area-inset-top);
-    height: 100%; display: flex; flex-direction: column;
-}
-
-/* تصغير اللوجو في البداية */
+/* شاشة Splash صغيرة */
+.splash-container { height: 100vh; display: flex; justify-content: center; align-items: center; }
 .splash-text span {
-    font-size: 40px; /* حجم صغير وراقي */
-    font-weight: bold; color: transparent;
+    font-size: 45px; font-weight: bold; color: transparent;
     display: inline-block; animation: glow-in 1s forwards;
-    letter-spacing: -2px;
 }
+.splash-text span:nth-child(1) { animation-delay: 0.3s; }
+.splash-text span:nth-child(2) { animation-delay: 0.6s; }
+.splash-text span:nth-child(3) { animation-delay: 0.9s; }
+.splash-text span:nth-child(4) { animation-delay: 1.2s; }
 
 @keyframes glow-in {
-    from { color: transparent; text-shadow: none; transform: scale(0.9); }
-    to { color: var(--accent); text-shadow: 0 0 8px var(--accent); transform: scale(1); }
+    from { color: transparent; text-shadow: none; transform: scale(0.8); }
+    to { color: var(--accent); text-shadow: 0 0 10px var(--accent); transform: scale(1); }
 }
 
-/* تصغير صندوق الدخول */
+/* صندوق الدخول الصغير */
 .box { 
-    background: var(--card); 
-    padding: 15px; 
-    border-radius: 15px; 
-    width: 80%; max-width: 260px; /* عرض صغير جداً */
-    margin: auto; text-align: center; 
+    background: var(--card); padding: 20px; border-radius: 15px; 
+    width: 80%; max-width: 280px; margin: auto; text-align: center; 
 }
-
-.box h2 { font-size: 18px; margin-bottom: 10px; }
-
 input { 
-    width: 100%; 
-    padding: 8px 12px; /* خانة رفيعة */
-    margin: 5px 0; 
-    border-radius: 8px; 
-    border: 1px solid #2d3748; 
-    background: #0b0f1a; 
-    color: white; 
-    font-size: 13px; /* خط صغير */
-    box-sizing: border-box; 
+    width: 100%; padding: 10px; margin: 6px 0; border-radius: 8px; 
+    border: 1px solid #2d3748; background: #0b0f1a; color: white; 
+    font-size: 14px; box-sizing: border-box; 
 }
-
 button { 
-    width: 100%; 
-    padding: 8px; 
-    background: var(--accent); 
-    color: white; 
-    border: none; 
-    border-radius: 8px; 
-    font-weight: bold; 
-    font-size: 13px; 
-    cursor: pointer; 
+    width: 100%; padding: 10px; background: var(--accent); color: white; 
+    border: none; border-radius: 8px; font-weight: bold; font-size: 14px; 
 }
 
-/* تصغير قائمة الأصدقاء */
+/* صفحة اليوزرز الميني (صغيرة جداً) */
 .user-item { 
-    display: flex; align-items: center; gap: 8px; 
-    background: var(--card); 
-    padding: 8px; 
-    margin: 5px 10px; 
-    border-radius: 10px; 
+    display: flex; align-items: center; gap: 10px; 
+    background: var(--card); padding: 8px 12px; margin: 6px 10px; 
+    border-radius: 10px; font-size: 13px;
 }
-.user-item b { font-size: 13px; }
-.user-item img { 
-    width: 32px; height: 32px; /* صور صغيرة */
-    border-radius: 50%; border: 1.5px solid var(--accent); 
-}
+.user-item img { width: 35px; height: 35px; border-radius: 50%; border: 1.5px solid var(--accent); }
 
-/* تصغير شاشة الشات */
-.chat-msgs { flex: 1; overflow-y: auto; padding: 8px; }
-.m { 
-    max-width: 85%; 
-    padding: 6px 10px; 
-    margin: 3px 0; 
-    border-radius: 10px; 
-    font-size: 12.5px; /* أصغر حجم مريح للعين */
-    line-height: 1.3;
-}
+/* شاشة الشات وتقسيمها */
+.chat-container { display: flex; flex-direction: column; height: 100vh; }
+.chat-msgs { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; }
+.m { max-width: 80%; padding: 7px 11px; margin: 3px 0; border-radius: 12px; font-size: 13px; }
+.me { align-self: flex-end; background: var(--accent); color: white; }
+.other { align-self: flex-start; background: #2d3748; color: white; }
 
-/* تصغير شريط الكتابة */
-#in { font-size: 13px; padding: 8px; }
-#send { width: 50px; font-size: 16px; padding: 0; }
+/* شريط الكتابة الثابت تحت خالص */
+.chat-input-area { 
+    background: var(--card); padding: 10px; 
+    display: flex; gap: 8px; border-top: 1px solid #2d3748;
+    position: sticky; bottom: 0;
+}

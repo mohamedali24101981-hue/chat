@@ -6,10 +6,28 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <audio id="splash-sound" src="welcome.mp3" preload="auto"></audio>
+
     <div class="splash-container">
-        <div class="splash-text"><span>P</span><span>o</span><span>d</span><span>y</span></div>
+        <div class="splash-text">
+            <span>P</span><span>o</span><span>d</span><span>y</span>
+        </div>
     </div>
+
     <script>
+        // محاولة تشغيل الصوت مع أول حرف
+        window.addEventListener('load', () => {
+            const sound = document.getElementById('splash-sound');
+            
+            // تأخير بسيط ليتماشى مع أول حرف (0.3 ثانية)
+            setTimeout(() => {
+                sound.play().catch(err => {
+                    console.log("المتصفح منع التشغيل التلقائي: يحتاج تفاعل أولاً");
+                });
+            }, 300);
+        });
+
+        // الانتقال للصفحة التالية بعد 3.5 ثانية
         setTimeout(() => {
             if(localStorage.getItem("me")) window.location.replace("users.html");
             else window.location.replace("login.html");
@@ -17,7 +35,6 @@
     </script>
 </body>
 </html>
-
 
 
 

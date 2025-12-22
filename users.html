@@ -9,7 +9,7 @@
 </head>
 <body style="display:block; overflow-y:auto;">
     <div style="padding:10px; background:var(--card); display:flex; justify-content:space-between; align-items:center;">
-        <b style="font-size:13px; color:var(--accent);">Pody Friends</b>
+        <b style="font-size:14px; color:var(--accent);">Pody</b>
         <span onclick="logout()" style="font-size:11px; opacity:0.7;">خروج</span>
     </div>
     <div id="list"></div>
@@ -25,10 +25,10 @@
             let h = "";
             snap.forEach(u => {
                 if(u.key !== me) {
-                    const status = u.val().online ? '<span class="status-dot"></span><small style="color:#22c55e">متصل</small>' : '<small style="opacity:0.5">أوفلاين</small>';
+                    const st = u.val().online ? '<span class="status-dot"></span><small style="color:#22c55e">متصل</small>' : '<small style="opacity:0.5">أوفلاين</small>';
                     h += `<div class="user-item" onclick="chat('${u.key}')">
                             <img src="${u.val().photo}">
-                            <div><b style="font-size:13px">${u.key}</b><br>${status}</div>
+                            <div><b style="font-size:13px">${u.key}</b><br>${st}</div>
                             <div class="dot" id="dot-${u.key}"></div>
                           </div>`;
                     monitor(u.key);
@@ -49,4 +49,3 @@
     </script>
 </body>
 </html>
-

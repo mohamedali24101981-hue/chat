@@ -10,21 +10,50 @@
 <body style="display:block; overflow-y:auto;">
     <div style="padding:15px; background:var(--card); display:flex; justify-content:space-between; align-items:center;">
         <b style="font-size:14px; color:var(--accent);">Pody</b>
-        <span onclick="localStorage.clear(); location.replace('login.html')" style="font-size:12px; color:#fb7185;">خروج</span>
+        <span onclick="logout()" style="font-size:12px; color:#fb7185; cursor:pointer;">خروج</span>
     </div>
     <div id="list"></div>
     <script src="Firebase.js"></script>
     <script>
         const me = localStorage.getItem("me");
         if(!me) location.replace("login.html");
+
+        // تحديث حالة الاتصال
+        const myStatusRef = db.ref('users/' + me + '/online');
+        myStatusRef.set(true);
+        myStatusRef.onDisconnect().set(false);
+
+        // طلب إذن الإشعارات
+        if (Notification.permission !== "granted") Notification.requestPermission();
+
         db.ref("users").on("value", snap => {
             let h = "";
             snap.forEach(u => {
-                if(u.key !== me) h += `<div class="user-item" onclick="chat('${u.key}')"><img src="${u.val().photo}"><b>${u.key}</b></div>`;
+                if(u.key !== me) {
+                    const isOnline = u.val().online ? '<span class="status-dot"></span> متصل' : 'أوفلاين';
+                    h += `<div class="user-item" onclick="chat('${u.key}')">
+                            <img src="${u.val().photo}" style="width:35px;border-radius:50%">
+                            <div><b>${u.key}</b><br><small style="font-size:10px">${isOnline}</small></div>
+                            <div class="dot" id="dot-${u.key}"></div>
+                          </div>`;
+                    checkNewMsgs(u.key);
+                }
             });
             document.getElementById("list").innerHTML = h;
         });
+
+        function checkNewMsgs(user) {
+            const id = [me, user].sort().join("_");
+            db.ref("chats/"+id).limitToLast(1).on("child_added", s => {
+                if(s.val().f === user && document.getElementById(`dot-${user}`)) {
+                    document.getElementById(`dot-${user}`).style.display = "block";
+                }
+            });
+        }
+
         function chat(u){ localStorage.setItem("to",u); location.href="chat.html"; }
+        function logout(){ myStatusRef.set(false); localStorage.clear(); location.replace('login.html'); }
     </script>
 </body>
 </html>
+

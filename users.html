@@ -8,9 +8,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body style="display:block; overflow-y:auto;">
-    <div style="padding:15px; background:var(--card); display:flex; justify-content:space-between; align-items:center;">
-        <b style="font-size:14px; color:var(--accent);">Pody</b>
-        <span onclick="logout()" style="font-size:12px; color:#fb7185; cursor:pointer;">خروج</span>
+    <div style="padding:12px; background:var(--card); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10;">
+        <b style="font-size:14px; color:var(--accent);">Pody Friends</b>
+        <span onclick="logout()" style="font-size:11px; color:#fb7185; cursor:pointer;">خروج</span>
     </div>
     <div id="list"></div>
     <script src="Firebase.js"></script>
@@ -18,31 +18,30 @@
         const me = localStorage.getItem("me");
         if(!me) location.replace("login.html");
 
-        // تحديث حالة الاتصال
-        const myStatusRef = db.ref('users/' + me + '/online');
-        myStatusRef.set(true);
-        myStatusRef.onDisconnect().set(false);
+        // نظام التواجد (Online)
+        const statusRef = db.ref('users/' + me + '/online');
+        statusRef.set(true);
+        statusRef.onDisconnect().set(false);
 
-        // طلب إذن الإشعارات
         if (Notification.permission !== "granted") Notification.requestPermission();
 
         db.ref("users").on("value", snap => {
             let h = "";
             snap.forEach(u => {
                 if(u.key !== me) {
-                    const isOnline = u.val().online ? '<span class="status-dot"></span> متصل' : 'أوفلاين';
+                    const onlineStatus = u.val().online ? '<span class="status-dot"></span><small style="color:#22c55e">متصل</small>' : '<small style="opacity:0.5">أوفلاين</small>';
                     h += `<div class="user-item" onclick="chat('${u.key}')">
-                            <img src="${u.val().photo}" style="width:35px;border-radius:50%">
-                            <div><b>${u.key}</b><br><small style="font-size:10px">${isOnline}</small></div>
+                            <img src="${u.val().photo}" style="width:32px; border-radius:50%">
+                            <div><b style="font-size:13px">${u.key}</b><br>${onlineStatus}</div>
                             <div class="dot" id="dot-${u.key}"></div>
                           </div>`;
-                    checkNewMsgs(u.key);
+                    monitorMsgs(u.key);
                 }
             });
             document.getElementById("list").innerHTML = h;
         });
 
-        function checkNewMsgs(user) {
+        function monitorMsgs(user) {
             const id = [me, user].sort().join("_");
             db.ref("chats/"+id).limitToLast(1).on("child_added", s => {
                 if(s.val().f === user && document.getElementById(`dot-${user}`)) {
@@ -50,10 +49,10 @@
                 }
             });
         }
-
         function chat(u){ localStorage.setItem("to",u); location.href="chat.html"; }
-        function logout(){ myStatusRef.set(false); localStorage.clear(); location.replace('login.html'); }
+        function logout(){ statusRef.set(false); localStorage.clear(); location.replace('login.html'); }
     </script>
 </body>
 </html>
+
 

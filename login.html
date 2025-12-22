@@ -9,7 +9,7 @@
 </head>
 <body style="display:flex;">
     <div class="box">
-        <h3 style="margin:0 0 10px 0; color:var(--accent);">Pody Chat</h3>
+        <h3 style="margin:0 0 10px 0; color:var(--accent); font-size:15px;">Pody Chat</h3>
         <input id="u" type="text" placeholder="اسمك">
         <input id="p" type="password" placeholder="كلمة السر">
         <button id="btn">دخول</button>
@@ -17,14 +17,14 @@
     <script src="Firebase.js"></script>
     <script>
         document.getElementById("btn").onclick = () => {
-            const u = document.getElementById("u").value, p = document.getElementById("p").value;
+            const u = document.getElementById("u").value.trim(), p = document.getElementById("p").value;
             if(!u || !p) return;
             db.ref("users/"+u).once("value").then(s => {
                 if(s.exists()){
                     if(s.val().password === p) { localStorage.setItem("me",u); location.replace("users.html"); }
                     else alert("خطأ");
                 } else {
-                    db.ref("users/"+u).set({name:u, password:p, photo: "https://ui-avatars.com/api/?name="+u})
+                    db.ref("users/"+u).set({name:u, password:p, photo: "https://ui-avatars.com/api/?name="+u+"&background=random&color=fff"})
                     .then(() => { localStorage.setItem("me",u); location.replace("users.html"); });
                 }
             });
@@ -32,4 +32,5 @@
     </script>
 </body>
 </html>
+
 

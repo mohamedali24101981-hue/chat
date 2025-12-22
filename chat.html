@@ -10,13 +10,13 @@
 <body>
     <div class="chat-container">
         <div style="padding:10px; background:var(--card); display:flex; align-items:center; gap:8px;">
-            <button onclick="location.href='users.html'" style="width:auto; padding:4px 8px; font-size:12px;">🔙</button>
-            <b id="target" style="font-size:13px;"></b>
+            <button onclick="location.href='users.html'" style="width:auto; padding:4px 8px; font-size:11px;">🔙</button>
+            <div><b id="target" style="font-size:13px;"></b><br><small id="status" style="color:#22c55e; font-size:10px;"></small></div>
         </div>
         <div id="msgs" class="chat-msgs"></div>
         <div class="chat-input-area">
             <input id="in" placeholder="رسالة..." style="flex:1;">
-            <button id="send" style="width:50px;">🚀</button>
+            <button id="send" style="width:45px;">🚀</button>
         </div>
     </div>
     <script src="Firebase.js"></script>
@@ -24,17 +24,26 @@
         const me = localStorage.getItem("me"), to = localStorage.getItem("to");
         const id = [me, to].sort().join("_");
         document.getElementById("target").innerText = to;
+
+        db.ref("users/"+to+"/online").on("value", s => {
+            document.getElementById("status").innerText = s.val() ? "متصل الآن" : "أوفلاين";
+        });
+
         db.ref("chats/"+id).on("child_added", s => {
-            let m = s.val(), d = document.createElement("div");
+            const m = s.val();
+            const time = new Date(m.ts).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const d = document.createElement("div");
             d.className = "m " + (m.f === me ? "me" : "other");
-            d.innerText = m.t;
+            d.innerHTML = `${m.t} <span class="time">${time}</span>`;
             document.getElementById("msgs").appendChild(d);
             document.getElementById("msgs").scrollTop = document.getElementById("msgs").scrollHeight;
         });
+
         document.getElementById("send").onclick = () => {
-            let t = document.getElementById("in").value;
-            if(t) { db.ref("chats/"+id).push({f:me, t:t}); document.getElementById("in").value=""; }
+            const t = document.getElementById("in").value.trim();
+            if(t) { db.ref("chats/"+id).push({f:me, t:t, ts: Date.now()}); document.getElementById("in").value=""; }
         };
     </script>
 </body>
 </html>
+

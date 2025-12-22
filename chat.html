@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -11,12 +11,15 @@
     <div class="chat-container">
         <div style="padding:10px; background:var(--card); display:flex; align-items:center; gap:8px;">
             <button onclick="location.href='users.html'" style="width:auto; padding:4px 8px; font-size:12px;">🔙</button>
-            <b id="target" style="font-size:13px;"></b>
+            <div>
+                <b id="target" style="font-size:13px;"></b><br>
+                <small id="status" style="font-size:10px; color:#22c55e;"></small>
+            </div>
         </div>
         <div id="msgs" class="chat-msgs"></div>
         <div class="chat-input-area">
-            <input id="in" placeholder="رسالة..." style="flex:1;">
-            <button id="send" style="width:50px;">🚀</button>
+            <input id="in" placeholder="رسالة..." style="flex:1; background:#0b0f1a; color:white; border:1px solid #2d3748; padding:8px; border-radius:8px;">
+            <button id="send" style="width:50px; background:var(--accent); border:none; border-radius:8px; color:white;">🚀</button>
         </div>
     </div>
     <script src="Firebase.js"></script>
@@ -24,16 +27,32 @@
         const me = localStorage.getItem("me"), to = localStorage.getItem("to");
         const id = [me, to].sort().join("_");
         document.getElementById("target").innerText = to;
+
+        // متابعة حالة الصديق
+        db.ref("users/"+to+"/online").on("value", s => {
+            document.getElementById("status").innerText = s.val() ? "متصل الآن" : "غير متصل";
+        });
+
         db.ref("chats/"+id).on("child_added", s => {
-            let m = s.val(), d = document.createElement("div");
+            let m = s.val();
+            let time = new Date(m.tstamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let d = document.createElement("div");
             d.className = "m " + (m.f === me ? "me" : "other");
-            d.innerText = m.t;
+            d.innerHTML = `${m.t} <span class="time">${time}</span>`;
             document.getElementById("msgs").appendChild(d);
             document.getElementById("msgs").scrollTop = document.getElementById("msgs").scrollHeight;
+
+            if (m.f !== me && document.hidden) {
+                new Notification(`Pody: ${m.f}`, { body: m.t });
+            }
         });
+
         document.getElementById("send").onclick = () => {
             let t = document.getElementById("in").value;
-            if(t) { db.ref("chats/"+id).push({f:me, t:t}); document.getElementById("in").value=""; }
+            if(t) { 
+                db.ref("chats/"+id).push({f:me, t:t, tstamp: Date.now()}); 
+                document.getElementById("in").value=""; 
+            }
         };
     </script>
 </body>

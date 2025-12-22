@@ -8,49 +8,73 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
-    <audio id="hit-sound" src="hit.mp3"></audio>
+    <audio id="send-sound" src="button-7.mp3" preload="auto"></audio>
+
     <div class="chat-container">
-        <div style="padding:10px; background:var(--card); display:flex; align-items:center; gap:8px;">
+        <div style="padding:10px; background:var(--card); display:flex; align-items:center; gap:8px; border-bottom:1px solid #2d3748;">
             <button onclick="location.href='users.html'" style="width:auto; padding:4px 8px; font-size:11px;">🔙</button>
-            <div><b id="target" style="font-size:13px;"></b><br><small id="status" style="color:#22c55e; font-size:10px;"></small></div>
+            <div>
+                <b id="target" style="font-size:13px;"></b><br>
+                <small id="status" style="color:#22c55e; font-size:10px;"></small>
+            </div>
         </div>
+        
         <div id="msgs" class="chat-msgs"></div>
+
         <div class="chat-input-area">
             <input id="in" placeholder="رسالة..." style="flex:1;">
             <button id="send" style="width:45px;">🚀</button>
         </div>
     </div>
+
     <script src="Firebase.js"></script>
     <script>
         const me = localStorage.getItem("me"), to = localStorage.getItem("to");
         const id = [me, to].sort().join("_");
-        const hit = document.getElementById("hit-sound");
+        const snd = document.getElementById("send-sound");
+        
         document.getElementById("target").innerText = to;
 
+        // متابعة حالة المتصل
         db.ref("users/"+to+"/online").on("value", s => {
             document.getElementById("status").innerText = s.val() ? "متصل الآن" : "أوفلاين";
         });
 
+        // عرض الرسائل والوقت
         db.ref("chats/"+id).on("child_added", s => {
             const m = s.val();
             const time = m.ts ? new Date(m.ts).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "";
+            
             const d = document.createElement("div");
             d.className = "m " + (m.f === me ? "me" : "other");
-            d.innerHTML = `${m.t} <span class="time">${time}</span>`;
+            
+            // تصميم الرسالة: النص فوق والوقت تحتها
+            d.innerHTML = `<div>${m.t}</div><span class="time">${time}</span>`;
+            
             document.getElementById("msgs").appendChild(d);
             document.getElementById("msgs").scrollTop = document.getElementById("msgs").scrollHeight;
         });
 
+        // وظيفة الإرسال مع الصوت
         document.getElementById("send").onclick = () => {
             const t = document.getElementById("in").value.trim();
             if(t) { 
-                hit.currentTime = 0; hit.play().catch(()=>{});
-                db.ref("chats/"+id).push({f:me, t:t, ts: Date.now()}); 
-                document.getElementById("in").value=""; 
+                // تشغيل الصوت المرفوع (button-7.mp3)
+                snd.currentTime = 0;
+                snd.play().catch(e => console.log("الصوت محجوب من المتصفح"));
+
+                // إرسال لـ Firebase
+                db.ref("chats/"+id).push({
+                    f: me, 
+                    t: t, 
+                    ts: Date.now() 
+                }); 
+                document.getElementById("in").value = ""; 
             }
         };
     </script>
 </body>
 </html>
+
 
 

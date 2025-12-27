@@ -4,25 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <audio id="splash-sound" src="welcome.mp3"></audio>
     <div class="splash-container">
         <div class="splash-text"><span>P</span><span>o</span><span>d</span><span>y</span></div>
     </div>
+
     <script>
-        const snd = document.getElementById('splash-sound');
-        window.addEventListener('load', () => { setTimeout(() => { snd.play().catch(() => {}); }, 300); });
-        window.addEventListener('touchstart', () => { snd.play().catch(() => {}); }, {once:true});
-        
+        // تسجيل نظام العمل بدون إنترنت (PWA)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("Pody جاهز أوفلاين"))
+                .catch(() => console.log("خطأ في التسجيل"));
+        }
+
+        // الانتقال التلقائي بعد انتهاء الأنميشن
         setTimeout(() => {
             if(localStorage.getItem("me")) window.location.replace("users.html");
             else window.location.replace("login.html");
-        }, 3800);
+        }, 3500);
     </script>
 </body>
 </html>
-
-
 
 
